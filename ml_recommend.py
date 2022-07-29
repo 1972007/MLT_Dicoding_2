@@ -71,11 +71,11 @@ apps.info()
 
 apps.isnull().sum()
 
+apps[apps.isnull().any(axis=1)]
+
 """Melihat banyak kategori yang ada"""
 
 sns.countplot(y=apps['Category'])
-
-apps[apps.isnull().any(axis=1)]
 
 """Dropping kolom yang kurang terpakai"""
 
@@ -135,6 +135,8 @@ apps_sizeChange['Content Rating'].value_counts()
 
 apps_sizeChange['Content Rating'].replace(["Adults only 18+","Unrated"],["Mature 17+","Mature 17+"], inplace=True)
 
+apps_sizeChange['Content Rating'].value_counts()
+
 for i in apps_sizeChange.columns:
   print(i,apps_sizeChange[i].unique(), len(apps_sizeChange[i].unique()))
 
@@ -146,7 +148,9 @@ version_count[version_count<240].keys(), len(version_count[version_count<240].ke
 apps_sizeChange["Android Ver"].replace(version_count[version_count<240].keys(), ["Others" for i in range(len(version_count[version_count<240].keys()))], inplace=True)
 apps_sizeChange["Android Ver"].replace("Varies with device", "Others", inplace=True)
 
-apps_sizeChange["Android Ver"].loc[apps_sizeChange["Android Ver"].value_counts().median()]
+apps_sizeChange["Android Ver"].value_counts()
+
+sns.countplot(y=apps_sizeChange['Android Ver'])
 
 #App	Category	Rating	Reviews	Size	Installs	Type
 #Price	Content Rating	Genres	Last Updated	Current Ver	Android Ver
@@ -158,8 +162,6 @@ apps_sizeChange.drop_duplicates(subset="App",inplace=True)
 
 apps_sizeChange.shape
 
-sns.countplot(y=apps_sizeChange['Android Ver'])
-
 correlation_matrix = apps_sizeChange.corr().round(2)
 sns.heatmap(data=correlation_matrix, annot=True, cmap='coolwarm', linewidths=0.5)
 
@@ -170,6 +172,8 @@ apps_sizeChange.columns
 apps_sizeChange['Installs'] = pd.to_numeric(apps_sizeChange['Installs'].str.replace(r'\D+','',regex=True))
 
 apps_sizeChange['Price']  = pd.to_numeric(apps_sizeChange['Price'].str.replace(r'\$','',regex=True))
+
+apps_sizeChange.info()
 
 apps_sizeChange
 
@@ -191,7 +195,7 @@ sim_data
 
 sim_data.loc["Coloring book moana"]
 
-def get_rec(name, sim_data=sim_data, items=apps_sizeChange, num=5):
+def get_rec(name, sim_data=sim_data, items=apps_sizeChange, num=20):
   idx = sim_data.loc[:,name].to_numpy().argpartition(range(-1,-num,-1))
   closest = sim_data.columns[idx[-1:-(num+2):-1]]
   closest = closest.drop(name,errors="ignore")
@@ -200,6 +204,12 @@ def get_rec(name, sim_data=sim_data, items=apps_sizeChange, num=5):
 
 apps.loc[1]
 
-get_rec("Coloring book moana")
+sim_to_moana=get_rec("Coloring book moana")
+sim_to_moana
 
-get_rec("The SCP Foundation DB fr nn5n")
+sim_to_moana.loc[sim_to_moana["Category"]!="ART_AND_DESIGN"]
+
+sim_scp= get_rec("The SCP Foundation DB fr nn5n")
+sim_scp
+
+sim_scp.loc[sim_scp["Category"]=="BOOKS_AND_REFERENCE"]
