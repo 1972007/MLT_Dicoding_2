@@ -92,18 +92,10 @@ apps
 
 apps['Size'].unique()
 
-apps.loc[apps["Size"]=='Varies with device']
-
 apps['Size'].str[-1].unique()
 
 apps_sizeChange=apps.copy()
 apps_sizeChange
-
-apps_sizeChange.loc[apps_sizeChange['Size'].str[-1]=="M"]
-
-apps_sizeChange.loc[apps_sizeChange['Size'].str[-1]=="k"]
-
-apps_sizeChange.loc[apps_sizeChange['Size']=="Varies with device"]
 
 """Mengganti data size menjadi float"""
 
@@ -117,9 +109,10 @@ apps_sizeChange["Size"] = apps_sizeChange['Size'].map(lambda x: float(x[:-1])*0.
 
 app_size_number = apps_sizeChange.loc[apps_sizeChange['Size'].str[-1]!="e"]
 app_size_number["Size"] = app_size_number["Size"].astype(float)
-app_size_number["Size"].mean(), app_size_number["Size"].mode()
 
-app_size_number.sort_values(["Size"], ascending=False)
+print("Mean = {}".format(app_size_number["Size"].mean()))
+print("Modus = {}".format(app_size_number["Size"].mode()))
+print("Median = {}".format(app_size_number["Size"].median()))
 
 apps_sizeChange.loc[apps_sizeChange['Size']=="Varies with device", "Size"] = app_size_number["Size"].mean()
 apps_sizeChange
@@ -136,9 +129,6 @@ apps_sizeChange['Content Rating'].value_counts()
 apps_sizeChange['Content Rating'].replace(["Adults only 18+","Unrated"],["Mature 17+","Mature 17+"], inplace=True)
 
 apps_sizeChange['Content Rating'].value_counts()
-
-for i in apps_sizeChange.columns:
-  print(i,apps_sizeChange[i].unique(), len(apps_sizeChange[i].unique()))
 
 version_count = apps_sizeChange["Android Ver"].value_counts()
 version_count
@@ -199,17 +189,30 @@ def get_rec(name, sim_data=sim_data, items=apps_sizeChange, num=20):
   idx = sim_data.loc[:,name].to_numpy().argpartition(range(-1,-num,-1))
   closest = sim_data.columns[idx[-1:-(num+2):-1]]
   closest = closest.drop(name,errors="ignore")
-  print(closest)
   return pd.DataFrame(closest).merge(items).head(num)
 
 apps.loc[1]
 
-sim_to_moana=get_rec("Coloring book moana")
+num = 20
+
+sim_to_moana=get_rec("Coloring book moana", num=num)
 sim_to_moana
 
-sim_to_moana.loc[sim_to_moana["Category"]!="ART_AND_DESIGN"]
-
-sim_scp= get_rec("The SCP Foundation DB fr nn5n")
+sim_scp= get_rec("The SCP Foundation DB fr nn5n", num=num)
 sim_scp
 
-sim_scp.loc[sim_scp["Category"]=="BOOKS_AND_REFERENCE"]
+precision = sim_to_moana["Category"].loc[sim_to_moana["Category"]=="ART_AND_DESIGN"].value_counts()[0] / num
+precision
+
+precision = sim_scp["Category"].loc[sim_scp["Category"]=="BOOKS_AND_REFERENCE"].value_counts()[0] / num
+precision
+
+num=40
+
+#Precision = total jawaban benar/ total jawaban
+sim_to_moana=get_rec("Coloring book moana", num=num)
+precision = sim_to_moana["Category"].loc[sim_to_moana["Category"]=="ART_AND_DESIGN"].value_counts()[0] / num
+precision
+
+precision = sim_scp["Category"].loc[sim_scp["Category"]=="BOOKS_AND_REFERENCE"].value_counts()[0] / num
+precision
