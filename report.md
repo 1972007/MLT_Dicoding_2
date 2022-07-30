@@ -15,7 +15,7 @@ Tujuan yang ingin dicapai :
 - Penggunaan algoritma sistem rekomendasi untuk memberikan rekomendasi berdasarkan kategori
 
 ## Data Understanding
-Data aplikasi yang digunakan diambil dari Kaggle. Data-data ini diammbil dengan teknik scrapping terhadap Google Play Store
+Data aplikasi yang digunakan diambil dari Kaggle. Data-data ini diambil dengan teknik scrapping terhadap Google Play Store
 [Google Play Store Apps](https://www.kaggle.com/datasets/lava18/google-play-store-apps/code?datasetId=49864&searchQuery=rec)
 \
 Berikut deskripsi kolom data yang digunakan:
